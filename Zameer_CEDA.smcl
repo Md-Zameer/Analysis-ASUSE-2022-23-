@@ -1,0 +1,477 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}D:\ASUSE\Rawdata\DDI-IND-MOSPI-NSSO-ASUSE2122\Zameer_CEDA.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}27 Aug 2025, 23:44:57
+
+{com}. do "C:\Users\TANVEE~1\AppData\Local\Temp\STD3360_000000.tmp"
+{txt}
+{com}. ssc install estout
+{txt}checking {hilite:estout} consistency and verifying not already installed...
+all files already exist and are up to date.
+
+{com}. ssc install ftools
+{txt}checking {hilite:ftools} consistency and verifying not already installed...
+installing into C:\Users\tanveer ahmad\ado\plus\...
+installation complete.
+
+{com}. 
+. *Merging and Assigning weightage 
+. 
+. cd "D:\ASUSE\Rawdata\DDI-IND-MOSPI-NSSO-ASUSE2122"
+{res}D:\ASUSE\Rawdata\DDI-IND-MOSPI-NSSO-ASUSE2122
+{txt}
+{com}. 
+. use "LEVEL - 12 (Block 10.1).dta", clear
+{txt}
+{com}. cap gen wt= mult/100
+{txt}
+{com}. cap gen ESID= fsu+ b1q3+ b1q4+ b1q5
+{txt}
+{com}. save, replace
+{txt}{p 0 4 2}
+file {bf}
+LEVEL - 12 (Block 10.1).dta{rm}
+saved
+{p_end}
+
+{com}. clear
+{txt}
+{com}. 
+. use "LEVEL - 03 (Block 2.1, 2.2 & 2.3).dta",clear
+{txt}
+{com}. cap gen wt= mlt/100
+{txt}
+{com}. cap gen ESID= fsu+ b1q3+ b1q4+ b1q5
+{txt}
+{com}. save, replace
+{txt}{p 0 4 2}
+file {bf}
+LEVEL - 03 (Block 2.1, 2.2 & 2.3).dta{rm}
+saved
+{p_end}
+
+{com}. clear
+{txt}
+{com}. 
+. use "LEVEL - 02(Block 2).dta",clear
+{txt}
+{com}. cap gen wt= Mult/100
+{txt}
+{com}. cap gen ESID= fsu+ b1q3+ b1q4+ b1q5
+{txt}
+{com}. save, replace
+{txt}{p 0 4 2}
+file {bf}
+LEVEL - 02(Block 2).dta{rm}
+saved
+{p_end}
+
+{com}. clear
+{txt}
+{com}. 
+. use "LEVEL - 08 (Block 7).dta", clear
+{txt}
+{com}. cap gen wt= mult/100
+{txt}
+{com}. cap gen ESID= fsu+ b1q3+ b1q4+ b1q5
+{txt}
+{com}. save, replace
+{txt}{p 0 4 2}
+file {bf}
+LEVEL - 08 (Block 7).dta{rm}
+saved
+{p_end}
+
+{com}. clear
+{txt}
+{com}. 
+. use "LEVEL - 09 (Block 8).dta", clear 
+{txt}
+{com}. cap gen ESID= fsu+ b1q3+ b1q4+ b1q5
+{txt}
+{com}. cap gen wt= mult/100
+{txt}
+{com}. duplicates drop ESID, force
+
+{p 0 4}{txt}Duplicates in terms of {res} ESID{p_end}
+
+{txt}(581,458 observations deleted)
+
+{com}. save "level_9.dta", replace
+{txt}{p 0 4 2}
+file {bf}
+level_9.dta{rm}
+saved
+{p_end}
+
+{com}. clear
+{txt}
+{com}. 
+. * Merging 
+. 
+. use "LEVEL - 12 (Block 10.1).dta",clear
+{txt}
+{com}. merge 1:1 ESID using "LEVEL - 02(Block 2).dta"
+{res}
+{txt}{col 5}Result{col 33}Number of obs
+{col 5}{hline 41}
+{col 5}Not matched{col 30}{res}               0
+{txt}{col 5}Matched{col 30}{res}         416,226{txt}  (_merge==3)
+{col 5}{hline 41}
+
+{com}. drop _merge
+{txt}
+{com}. merge 1:1 ESID using "LEVEL - 03 (Block 2.1, 2.2 & 2.3).dta"
+{res}
+{txt}{col 5}Result{col 33}Number of obs
+{col 5}{hline 41}
+{col 5}Not matched{col 30}{res}               0
+{txt}{col 5}Matched{col 30}{res}         416,226{txt}  (_merge==3)
+{col 5}{hline 41}
+
+{com}. drop _merge
+{txt}
+{com}. merge 1:1 ESID using "level_9.dta"
+{res}
+{txt}{col 5}Result{col 33}Number of obs
+{col 5}{hline 41}
+{col 5}Not matched{col 30}{res}               4
+{txt}{col 9}from master{col 30}{res}               4{txt}  (_merge==1)
+{col 9}from using{col 30}{res}               0{txt}  (_merge==2)
+
+{col 5}Matched{col 30}{res}         416,222{txt}  (_merge==3)
+{col 5}{hline 41}
+
+{com}. drop _merge
+{txt}
+{com}. merge 1:m ESID using "LEVEL - 08 (Block 7).dta"
+{res}
+{txt}{col 5}Result{col 33}Number of obs
+{col 5}{hline 41}
+{col 5}Not matched{col 30}{res}           2,891
+{txt}{col 9}from master{col 30}{res}           2,891{txt}  (_merge==1)
+{col 9}from using{col 30}{res}               0{txt}  (_merge==2)
+
+{col 5}Matched{col 30}{res}       1,776,346{txt}  (_merge==3)
+{col 5}{hline 41}
+
+{com}. 
+. 
+. * Generating Variables 
+. 
+. *Female_owner as dummy 
+. gen female_owner = ( b2204 == "2")
+{txt}
+{com}. 
+. * State Variable
+. 
+. gen StateCode = substr(nss_region, 1, 2)
+{txt}
+{com}. 
+. tempfile blocks
+{txt}
+{com}. save `blocks'
+{txt}{p 0 4 2}
+file {bf}
+C:\Users\TANVEE~1\AppData\Local\Temp\ST_3360_000001.tmp{rm}
+saved
+as .dta format
+{p_end}
+
+{com}. 
+. import excel "D:\ASUSE\NSS_ASUSE_21_22_Layout_mult_post (1).xlsx", sheet("State Code") cellrange(A2:B39) firstrow clear
+{res}{text}(2 vars, 37 obs)
+
+{com}. 
+. merge 1:m StateCode using "`blocks'", nogen
+{res}
+{txt}{col 5}Result{col 33}Number of obs
+{col 5}{hline 41}
+{col 5}Not matched{col 30}{res}               0
+{txt}{col 5}Matched{col 30}{res}       1,779,237{txt}  
+{col 5}{hline 41}
+
+{com}. 
+. save "inter_data.dta",replace
+{txt}{p 0 4 2}
+file {bf}
+inter_data.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. 
+. * State-wise proportion of female owned enterprise 
+. * Collapse at state level
+. 
+. 
+. collapse (mean) female_owner [aw=wt], by(StateName)
+{res}{txt}
+{com}. 
+. graph hbar (mean) female_owner, over(StateName, sort(1) descending label(labsize(vsmall))) ///
+>     blabel(bar, format(%4.2f) size(vsmall)) ///
+>     ytitle("Proportion of female-owned enterprises")    note("Source: ASUSE 2021-22, weighted") 
+{res}{txt}
+{com}.         graph export "female_owned_ep_state.png", replace
+{txt}{p 0 4 2}
+file {bf}
+female_owned_ep_state.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         
+. * Sort and plot (Top 5 states)
+. 
+. *average proportion of female-owned enterprises by enterprise size for Enterprise size ranging from 1, 2, 3, 4….. upto 10 workers.
+. * First drop enterprises which shows the average number of worker >10.
+. 
+. use "inter_data",clear
+{txt}
+{com}. su b8q9 
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 8}b8q9 {c |}{res}  1,779,229    1.177775    3.366567          1       1002
+{txt}
+{com}. 
+. keep if inrange(b8q9 , 1, 10)
+{txt}(10,000 observations deleted)
+
+{com}. gen enterprise_size = b8q9
+{txt}
+{com}. 
+. collapse (mean) female_owner [aw=wt], by(enterprise_size)
+{res}{txt}
+{com}. 
+. 
+. graph bar (mean) female_owner, over(enterprise_size, label(labsize(vsmall))) ///
+>     blabel(bar, format(%9.3f) size(vsmall)) ///
+>     ytitle("Proportion of female-owned enterprises") ///
+>         note("Source: ASUSE 2021-22, weighted") 
+{res}{txt}
+{com}.         
+.         graph export "female_owned_epsize.png", replace
+{txt}{p 0 4 2}
+file {bf}
+female_owned_epsize.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         
+.                 
+. *******************************************************************************
+. 
+. 
+. 
+. 
+. use "inter_data",clear
+{txt}
+{com}. 
+. gen receipt1 = b7q3
+{txt}(2,891 missing values generated)
+
+{com}. replace receipt1 =. if inlist(b7q2, "762", "763", "764", "765", "766", "769", "771", "772")
+{txt}(1,363,146 real changes made, 1,363,146 to missing)
+
+{com}. 
+. gen expenses1 = b7q3
+{txt}(2,891 missing values generated)
+
+{com}. replace expenses1 =. if inlist(b7q2, "761", "763", "764", "765", "766", "769", "771", "772")
+{txt}(1,363,262 real changes made, 1,363,262 to missing)
+
+{com}. 
+. egen receipt = total(receipt1), by(ESID)
+{txt}
+{com}. egen expenses = total(expenses1), by(ESID)
+{txt}
+{com}. 
+. duplicates drop ESID,force
+
+{p 0 4}{txt}Duplicates in terms of {res} ESID{p_end}
+
+{txt}(1,363,011 observations deleted)
+
+{com}. 
+. foreach var of varlist receipt expenses {c -(}
+{txt}  2{com}.         replace `var' = `var'/30 if b2pt2265=="1" | b2pt2265=="2"
+{txt}  3{com}.         replace `var' = `var'/365 if b2pt2265=="3"
+{txt}  4{com}.         replace `var' = `var'*31
+{txt}  5{com}. {c )-}
+{txt}(404,303 real changes made)
+(3,429 real changes made)
+(413,200 real changes made)
+(404,163 real changes made)
+(3,429 real changes made)
+(413,084 real changes made)
+
+{com}. 
+. gen profit = receipt - expenses
+{txt}
+{com}. 
+. 
+. ttest profit, by(female_owner)
+
+{txt}Two-sample t test with equal variances
+{hline 9}{c TT}{hline 68}
+   Group{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. err.{col 47}Std. dev.{col 59}[95% conf. interval]
+{hline 9}{c +}{hline 68}
+       0 {c |}{res}{col 12}335,673{col 22} 42958.72{col 34} 955.9806{col 46} 553869.3{col 58} 41085.02{col 70} 44832.41
+       {txt}1 {c |}{res}{col 12} 80,553{col 22} 15039.36{col 34} 530.1796{col 46} 150474.8{col 58} 14000.21{col 70}  16078.5
+{txt}{hline 9}{c +}{hline 68}
+Combined {c |}{res}{col 12}416,226{col 22} 37555.43{col 34} 777.9534{col 46} 501901.1{col 58} 36030.67{col 70}  39080.2
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 22} 27919.36{col 34} 1968.699{col 58} 24060.77{col 70} 31777.95
+{txt}{hline 9}{c BT}{hline 68}
+    diff = mean({res}0{txt}) - mean({res}1{txt})                                      t = {res} 14.1816
+{txt}H0: diff = 0                                     Degrees of freedom = {res}  416224
+
+    {txt}Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = {res}1.0000         {txt}Pr(|T| > |t|) = {res}0.0000          {txt}Pr(T > t) = {res}0.0000
+{txt}
+{com}. estpost ttest profit, by(female_owner)
+
+{txt}{space 0}{space 0}{ralign 12:}{space 1}{c |}{space 1}{ralign 9:e(b)}{space 1}{space 1}{ralign 9:e(count)}{space 1}{space 1}{ralign 9:e(se)}{space 1}{space 1}{ralign 9:e(t)}{space 1}{space 1}{ralign 9:e(df_t)}{space 1}{space 1}{ralign 9:e(p_l)}{space 1}{space 1}{ralign 9:e(p)}{space 1}{space 1}{ralign 9:e(p_u)}{space 1}{space 1}{ralign 9:e(N_1)}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}
+{space 0}{space 0}{ralign 12:profit}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 27919.36}}}{space 1}{space 1}{ralign 9:{res:{sf:   416226}}}{space 1}{space 1}{ralign 9:{res:{sf: 1968.699}}}{space 1}{space 1}{ralign 9:{res:{sf: 14.18163}}}{space 1}{space 1}{ralign 9:{res:{sf:   416224}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.22e-45}}}{space 1}{space 1}{ralign 9:{res:{sf: 6.10e-46}}}{space 1}{space 1}{ralign 9:{res:{sf:   335673}}}{space 1}
+
+{space 0}{space 0}{ralign 12:}{space 1}{c |}{space 1}{ralign 9:e(mu_1)}{space 1}{space 1}{ralign 9:e(N_2)}{space 1}{space 1}{ralign 9:e(mu_2)}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}
+{space 0}{space 0}{ralign 12:profit}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 42958.72}}}{space 1}{space 1}{ralign 9:{res:{sf:    80553}}}{space 1}{space 1}{ralign 9:{res:{sf: 15039.36}}}{space 1}
+
+{com}. esttab using "ttest.tex", wide nonumber mtitle("Difference") se label replace 
+{txt}(tabulating estimates stored by eststo; specify "." to tabulate the active results)
+{res}{txt}(output written to {browse  `"ttest.tex"'})
+
+{com}. 
+. 
+. destring b2207,replace
+{txt}b2207: all characters numeric; {res}replaced {txt}as {res}byte
+{txt}(17566 missing values generated)
+{res}{txt}
+{com}. gen social_group = b2207 
+{txt}(17,566 missing values generated)
+
+{com}. lab var social_group "Social Group (Caste)"
+{txt}
+{com}. lab define caste 1 "ST" 2 "SC" 3 "OBC" 4 "General" 9 "Not Known"
+{txt}
+{com}. lab values social_group caste
+{txt}
+{com}. 
+. 
+. estpost tabstat profit [aw=wt], by(social_group) stat(mean) 
+
+{txt}Summary statistics: mean
+     for variables: profit
+  by categories of: social_group
+
+{space 0}{space 0}{ralign 12:social_group}{space 1}{c |}{space 1}{ralign 9:e(mean)}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}
+{space 0}{space 0}{ralign 12:ST}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 12512.54}}}{space 1}
+{space 0}{space 0}{ralign 12:SC}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 13528.19}}}{space 1}
+{space 0}{space 0}{ralign 12:OBC}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 25814.13}}}{space 1}
+{space 0}{space 0}{ralign 12:General}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 36587.67}}}{space 1}
+{space 0}{space 0}{ralign 12:Not_Known}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 19194.47}}}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}
+{space 0}{space 0}{ralign 12:Total}{space 1}{c |}{space 1}{ralign 9:{res:{sf: 26671.81}}}{space 1}
+
+{com}. eststo q2b
+{txt}
+{com}. esttab q2b using "profit_by_caste.tex", cells("mean(fmt(2))") nostar booktabs replace
+{res}{txt}(output written to {browse  `"profit_by_caste.tex"'})
+
+{com}. 
+.                 ***** Question 3*****
+.                 *===================*
+.                 
+.                 
+. gen entry_year= b2215
+{txt}
+{com}. 
+. keep if entry_year >= 2001 & entry_year <= 2021
+{txt}(50,099 observations deleted)
+
+{com}. 
+. gen treated_state = inlist(StateCode, "18", "10", "7", "29", "8", "3", "14")
+{txt}
+{com}. 
+. generate treated = 1 if treated_state ==1
+{txt}(316,673 missing values generated)
+
+{com}. replace treated = 0 if treated ==.
+{txt}(316,673 real changes made)
+
+{com}. 
+. gen post = entry_year >= 2015
+{txt}
+{com}. 
+. gen policy = treated*post
+{txt}
+{com}. 
+. ssc install reghdfe 
+{txt}checking {hilite:reghdfe} consistency and verifying not already installed...
+all files already exist and are up to date.
+
+{com}. 
+. destring district,replace
+{txt}district: all characters numeric; {res}replaced {txt}as {res}byte
+{txt}
+{com}. 
+. eststo q3 :reghdfe female_owner policy [aw=wt], absorb(district entry_year) vce(cluster StateCode)
+{res}{txt}({browse "http://scorreia.com/research/hdfe.pdf":MWFE estimator} converged in 4 iterations)
+{res}
+{txt}HDFE Linear regression{col 51}Number of obs{col 67}= {res}   366,127
+{txt}Absorbing 2 HDFE groups{col 51}F({res}   1{txt},{res}     36{txt}){col 67}= {res}      1.02
+{txt}Statistics robust to heteroskedasticity{col 51}Prob > F{col 67}= {res}    0.3204
+{txt}{col 51}R-squared{col 67}= {res}    0.0233
+{txt}{col 51}Adj R-squared{col 67}= {res}    0.0230
+{txt}{col 51}Within R-sq.{col 67}= {res}    0.0015
+{txt}{col 1}Number of clusters ({res}StateCode{txt}) {col 30}= {res}        37{txt}{col 51}Root MSE{col 67}= {res}    0.4196
+
+{txt}{ralign 78:(Std. err. adjusted for {res:37} clusters in {res:StateCode})}
+{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}female_owner{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      t{col 46}   P>|t|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}policy {c |}{col 14}{res}{space 2}-.0665115{col 26}{space 2} .0660103{col 37}{space 1}   -1.01{col 46}{space 3}0.320{col 54}{space 4}-.2003865{col 67}{space 3} .0673636
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} .2407783{col 26}{space 2} .0165124{col 37}{space 1}   14.58{col 46}{space 3}0.000{col 54}{space 4} .2072896{col 67}{space 3} .2742669
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Absorbed degrees of freedom:
+{res}{col 1}{text}{hline 13}{c TT}{hline 12}{hline 12}{hline 14}{hline 1}{c TRC}
+{col 1}{text} Absorbed FE{col 14}{c |} Categories{col 27} - Redundant{col 39}  = Num. Coefs{col 54}{c |}
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 12}{hline 14}{hline 1}{c RT}
+{col 1}{text}    district{col 14}{c |}{space 1}       71{col 27}{space 1}        0{col 39}{result}{space 1}       71{col 53}{text} {col 54}{c |}
+{res}{col 1}{text}  entry_year{col 14}{c |}{space 1}       21{col 27}{space 1}        1{col 39}{result}{space 1}       20{col 53}{text} {col 54}{c |}
+{res}{col 1}{text}{hline 13}{c BT}{hline 12}{hline 12}{hline 14}{hline 1}{c BRC}
+{res}{txt}
+{com}. 
+. esttab q3 using "regression.tex", b(3) se replace ///
+>  label compress booktabs longtable stats(N r2) 
+{res}{txt}{p 0 4 2}
+(file {bf}
+regression.tex{rm}
+not found)
+{p_end}
+(output written to {browse  `"regression.tex"'})
+
+{com}. 
+. 
+. 
+{txt}end of do-file
+
+{com}. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}D:\ASUSE\Rawdata\DDI-IND-MOSPI-NSSO-ASUSE2122\Zameer_CEDA.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}27 Aug 2025, 23:53:01
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
